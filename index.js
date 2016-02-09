@@ -5,8 +5,62 @@ var stream = require('stream');
 var util = require('util');
 
 var File = require('vinyl');
+var through2 = require('through2');
 
-module.exports = function (declaration, definition) {
+module.exports = {};
+
+var getModuleName = (prefix, file) => {
+  return prefix + file.basename.replace(/[^a-zA-Z0-9_]/g, '_');
+};
+
+module.exports.declaration = function (prefix) {
+  if (typeof prefix === 'undefined') {
+    prefix = 'resource_';
+  }
+
+  return through2.obj(function (file, enc, callback) {
+    file = new File(file);
+    var moduleName = getModuleName(prefix, file);
+    file.basename = moduleName + '.d.ts';
+    file.contents = new Buffer(
+`
+export declare const ${moduleName} : string;
+`
+    );
+    this.push(file);
+    callback();
+  });
+};
+
+module.exports.definition = function (prefix) {
+  if (typeof prefix === 'undefined') {
+    prefix = 'resource_';
+  }
+
+  return through2.obj(function (file, enc, callback) {
+    file = new File(file);
+    var moduleName = getModuleName(prefix, file);
+    var contents = new Buffer(
+`System.register([], function (exports, context) {
+  var ${moduleName} = '${file.contents.toString().replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0')}';
+  return {
+    setters: [],
+    execute: function () {
+      exports('${moduleName}', ${moduleName});
+    }
+  };
+});
+`
+    );
+    file.stem = moduleName;
+    file.extname = '.js';
+    file.contents = contents;
+    this.push(file);
+    callback();
+  });
+};
+
+module.exports.pack = function (declaration, definition) {
   var ResouceStream = function () {
     var _this = this;
     this.input = [];
@@ -77,7 +131,7 @@ module.exports = function (declaration, definition) {
 
   function createResourceDefinition (resource) {
     return new Buffer(
-`System.register([], function(exports) {
+`System.register([], function(exports, context) {
   var RESOURCE = ${JSON.stringify(resource)};
   return {
     setters: [],
