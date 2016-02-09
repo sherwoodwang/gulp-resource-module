@@ -1,0 +1,23 @@
+{
+  "name": "gulp-resource-module",
+  "version": "0.0.1",
+  "description": "Pack resources into a systemjs module",
+  "homepage": "http://github.com/sherwoodwang/gulp-resource-module",
+  "repository": "git://github.com/sherwoodwang/gulp-resource-module.git",
+  "main": "index.js",
+  "keywords": [
+    "gulpplugin",
+    "gulp"
+  ],
+  "author": "Sherwood Wang <sherwood@wang.onl>",
+  "license": "BSD-2-Clause",
+  "files": [
+    "index.js",
+    "package.json",
+    "README.md",
+    "LICENSE.md"
+  ],
+  "dependencies": {
+    "vinyl": "^1.1.1"
+  }
+}
