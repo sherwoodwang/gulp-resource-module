@@ -78,11 +78,11 @@ module.exports = function (declaration, definition) {
   function createResourceDefinition (resource) {
     return new Buffer(
 `System.register([], function(exports) {
-  var resource = ${JSON.stringify(resource)};
+  var RESOURCE = ${JSON.stringify(resource)};
   return {
     setters: [],
     execute: function () {
-      exports('resource', resource);
+      exports('RESOURCE', RESOURCE);
     }
   };
 });
@@ -90,7 +90,7 @@ module.exports = function (declaration, definition) {
   }
   function createResourceDeclaration(resource) {
     var s = new stream.PassThrough();
-    s.write('export const resource : ');
+    s.write('export declare const RESOURCE : ');
     var dumpSchema = (s, obj) => {
       if (typeof obj === 'object') {
         s.write('{ ');
@@ -98,6 +98,7 @@ module.exports = function (declaration, definition) {
           s.write(key);
           s.write(' : ');
           dumpSchema(s, obj[key]);
+          s.write('; ');
         });
         s.write(' }');
       } else {
