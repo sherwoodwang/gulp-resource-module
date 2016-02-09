@@ -7,6 +7,5 @@ Example:
         .pipe(less())
         .pipe(minifyCSS())
         .pipe(resource(
-          'src/app/resource.d.ts', 'dist/app/resource.js'))
-        .pipe(gulp.dest('.'));
+          'src/app/resource.d.ts', 'dist/app/resource.js'));
     });

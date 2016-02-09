@@ -3,6 +3,7 @@
 var util = require('util');
 var stream = require('stream');
 
+var gulp = require('gulp');
 var File = require('vinyl');
 
 module.exports = function (declaration, definition) {
@@ -71,7 +72,7 @@ module.exports = function (declaration, definition) {
   };
 
   util.inherits(ResouceStream, stream.Duplex);
-  return new ResouceStream();
+  return (new ResouceStream()).pipe(gulp.dist('.'));
 
   function createResourceDefinition (resource) {
     return new Buffer(
