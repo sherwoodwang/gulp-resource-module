@@ -1,9 +1,9 @@
 /* jshint esversion:6 */
 
-var util = require('util');
+var path = require('path');
 var stream = require('stream');
+var util = require('util');
 
-var gulp = require('gulp');
 var File = require('vinyl');
 
 module.exports = function (declaration, definition) {
@@ -25,8 +25,9 @@ module.exports = function (declaration, definition) {
       }
       var cont = true;
       while (cont && this.output.length) {
-        cont = this.push(this.output[0]);
+        var element = this.output[0];
         this.output = this.output[1];
+        cont = this.push(element);
       }
       this.outputBlocking = !cont;
     };
@@ -59,11 +60,11 @@ module.exports = function (declaration, definition) {
         });
       });
       this.addToOutput(new File({
-        path: definition,
+        path: path.resolve(definition),
         contents: createResourceDefinition(resource)
       }));
       this.addToOutput(new File({
-        path: declaration,
+        path: path.resolve(declaration),
         contents: createResourceDeclaration(resource)
       }));
       this.addToOutput(null);
@@ -72,7 +73,7 @@ module.exports = function (declaration, definition) {
   };
 
   util.inherits(ResouceStream, stream.Duplex);
-  return (new ResouceStream()).pipe(gulp.dist('.'));
+  return new ResouceStream();
 
   function createResourceDefinition (resource) {
     return new Buffer(

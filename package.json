@@ -1,6 +1,6 @@
 {
   "name": "gulp-resource-module",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Pack resources into a systemjs module",
   "homepage": "http://github.com/sherwoodwang/gulp-resource-module",
   "repository": "git://github.com/sherwoodwang/gulp-resource-module.git",
@@ -18,7 +18,6 @@
     "LICENSE.md"
   ],
   "dependencies": {
-    "gulp": "^3.9.1",
     "vinyl": "^1.1.1"
   }
 }
