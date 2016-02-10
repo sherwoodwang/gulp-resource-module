@@ -6,6 +6,7 @@ var util = require('util');
 
 var File = require('vinyl');
 var through2 = require('through2');
+var gs = require('glob-stream');
 
 module.exports = {};
 
@@ -42,7 +43,13 @@ module.exports.definition = function (prefix) {
     var moduleName = getModuleName(prefix, file);
     var contents = new Buffer(
 `System.register([], function (exports, context) {
-  var ${moduleName} = '${file.contents.toString().replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0')}';
+  var ${moduleName} = '${
+    file.contents.toString()
+    .replace(/[\\"']/g, '\\$&')
+    .replace(/\n/g, '\\n')
+    .replace(/\r/g, '\\r')
+    .replace(/\u0000/g, '\\0')
+  }';
   return {
     setters: [],
     execute: function () {
@@ -164,4 +171,21 @@ module.exports.pack = function (declaration, definition) {
     s.end();
     return s;
   }
+};
+
+module.exports.glob = function (globs, options) {
+  var s = gs.create(globs, options);
+  if (options && options.extmap) {
+    var extmap = options.extmap;
+    delete options.extmap;
+    s = s.pipe(through2.obj(function (file, enc, callback) {
+      file = new File(file);
+      if (extmap[file.extname]) {
+        file.extname = extmap[file.extname];
+      }
+      this.push(file);
+      callback();
+    }));
+  }
+  return s;
 };
