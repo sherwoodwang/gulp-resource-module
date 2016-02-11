@@ -2,6 +2,10 @@ Pack resources into systemjs modules.
 
 Example:
 
+    var cssnano = require('gulp-cssnano');
+    var less = require('gulp-less');
+    var resource = require('gulp-resource-module');
+
     gulp.task('resource', function () {
       return gulp.src('src/less/**/*.less')
         .pipe(less())
@@ -14,12 +18,14 @@ Example:
 
 Or:
 
+    var cssnano = require('gulp-cssnano');
+    var less = require('gulp-less');
+    var rename = require('gulp-rename');
+    var resource = require('gulp-resource-module');
+
     gulp.task('resource-declaration', function () {
-      return resource.glob('src/less/**/*.less', {
-          extmap: {
-            '.less': '.css'
-          }
-        })
+      return gulp.src('src/less/**/*.less', { read: false })
+        .pipe(rename({ extname: '.css' }))
         .pipe(resource.declaration())
         .pipe(gulp.dest('src/ts'));
     });
